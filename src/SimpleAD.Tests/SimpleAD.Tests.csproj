@@ -30,6 +30,18 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="NSubstitute">
+      <HintPath>packages\NSubstitute.1.4.0.0\lib\NET40\NSubstitute.dll</HintPath>
+    </Reference>
+    <Reference Include="Ploeh.AutoFixture">
+      <HintPath>packages\AutoFixture.3.21.0\lib\net40\Ploeh.AutoFixture.dll</HintPath>
+    </Reference>
+    <Reference Include="Ploeh.AutoFixture.AutoNSubstitute">
+      <HintPath>packages\AutoFixture.AutoNSubstitute.3.21.0\lib\net40\Ploeh.AutoFixture.AutoNSubstitute.dll</HintPath>
+    </Reference>
+    <Reference Include="Ploeh.AutoFixture.Xunit">
+      <HintPath>packages\AutoFixture.Xunit.3.21.0\lib\net40\Ploeh.AutoFixture.Xunit.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.DirectoryServices" />
@@ -46,13 +58,19 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AutoNDataAttribute.cs" />
+    <Compile Include="BindingMethod.cs" />
     <Compile Include="Converter.cs" />
     <Compile Include="DirectoryConnection.cs" />
     <Compile Include="DirectoryEntryExtensions.cs" />
+    <Compile Include="DirectoryEntryQuery.cs" />
+    <Compile Include="DomainController.cs" />
+    <Compile Include="NetworkCredentialExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="DirectoryConnectionTests.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

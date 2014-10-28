@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.DirectoryServices;
 using System.Dynamic;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 
 namespace SimpleAD.Tests
 {
@@ -17,7 +15,7 @@ namespace SimpleAD.Tests
             {
                 ((IDictionary<string, object>)dyn)[pro.PropertyName] = pro.PrettyPropertyValue();
             }
-            ((IDictionary<string, object>)dyn)["NativeGuid"]= e.NativeGuid;
+            ((IDictionary<string, object>)dyn)["NativeGuid"] = e.NativeGuid;
             ((IDictionary<string, object>)dyn)["Guid"] = e.Guid;
             return dyn;
         }
@@ -28,12 +26,16 @@ namespace SimpleAD.Tests
             {
                 case "accountExpires":
                     return LargeIntegerToDateTime(valCol);
+
                 case "badPasswordTime":
                     return LargeIntegerToDateTime(valCol);
+
                 case "lastLogoff":
                     return LargeIntegerToDateTime(valCol);
+
                 case "lastLogon":
                     return LargeIntegerToDateTime(valCol);
+
                 default: return valCol.Value;
             }
         }
@@ -50,7 +52,5 @@ namespace SimpleAD.Tests
                 return DateTime.FromFileTimeUtc(asLong);
             }
         }
-
-     
     }
 }

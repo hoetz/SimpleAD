@@ -2,27 +2,65 @@
 using System.Collections.Generic;
 using System.DirectoryServices;
 using System.Dynamic;
-using System.Linq;
-using System.Text;
+using System.Net;
+using System.Security;
 
 namespace SimpleAD.Tests
 {
     public class DirectoryConnection
     {
-        private string ldapPath;
+        private NetworkCredential _credentials = NetworkCredentialExtensions.EMPTY;
 
-        public DirectoryConnection(string ldapPath)
+        public NetworkCredential credentials
         {
-            this.ldapPath = ldapPath;
+            get { return this._credentials; }
         }
-        public static DirectoryConnection Create(string ldapPath)
+
+        private string _DomainController;
+
+        public string DomainController
         {
-            return new DirectoryConnection(ldapPath);
+            get { return this._DomainController; }
+        }
+
+        private DirectoryConnection(string domainController, NetworkCredential credentials)
+        {
+            this._DomainController = domainController;
+            this._credentials = credentials;
+        }
+
+
+        public static DirectoryConnection Create()
+        {
+            var dc = Tests.DomainController.GetCurrent();
+            return new DirectoryConnection(dc, NetworkCredentialExtensions.EMPTY);
+        }
+
+        public DirectoryConnection WithCredentials(string domain, string userName, string password)
+        {
+            if (string.IsNullOrEmpty(domain) || string.IsNullOrEmpty(userName) || string.IsNullOrEmpty(password))
+            {
+                throw new ArgumentException("Domain, Username & Password required");
+            }
+            SecureString securePwd = new SecureString();
+            foreach (char ch in password)
+            {
+                securePwd.AppendChar(ch);
+            }
+            var dc = Tests.DomainController.GetCurrent();
+            return new DirectoryConnection(
+                this.DomainController,
+                new NetworkCredential(userName, securePwd, domain));
+        }
+
+        public DirectoryConnection WithDomainController(string domainController)
+        {
+            return new DirectoryConnection(domainController, this.credentials);
         }
 
         public IEnumerable<dynamic> Query(string ldapQuery)
         {
-            DirectoryEntry searchRoot = new DirectoryEntry(this.ldapPath);
+            DirectoryEntry searchRoot = new DirectoryEntry(GetDefaultLDAPPath());
             DirectorySearcher search = new DirectorySearcher(searchRoot);
             search.Filter = ldapQuery;
             search.PropertiesToLoad.Add("samaccountname");
@@ -42,6 +80,92 @@ namespace SimpleAD.Tests
                     yield return entry.ToDynamicPropertyCollection();
                 }
             }
+        }
+
+        private string GetDefaultLDAPPath()
+        {
+            DirectoryEntryQuery qry = new DirectoryEntryQuery(this.DomainController, this.credentials);
+
+            DirectoryEntry ent = this.GetRootDSE();
+            if (ent != null)
+            {
+                string DefaultNamingContext = ent.Properties["defaultNamingContext"].Value.ToString();
+                if (DefaultNamingContext.Length > 0)
+                {
+                    return string.Format("LDAP://{0}", DefaultNamingContext);
+                }
+            }
+            throw new InvalidOperationException("Could not find DefaultNamingContext");
+        }
+
+        private DirectoryEntry GetDefaultDomainEntry()
+        {
+            DirectoryEntryQuery qry = new DirectoryEntryQuery(this.DomainController, this.credentials);
+
+            DirectoryEntry ent = this.GetRootDSE();
+            if (ent != null)
+            {
+                string DefaultNamingContext = ent.Properties["defaultNamingContext"].Value.ToString();
+                if (DefaultNamingContext.Length > 0)
+                {
+                    ent = qry.GetDirectoryEntry(DefaultNamingContext);
+                }
+                else
+                {
+                    ent = null;
+                }
+            }
+            return ent;
+        }
+
+        private DirectoryEntry GetRootDSE()
+        {
+            string connectingPoint = "";
+            if (this.DomainController.Length > 0)
+            {
+                connectingPoint = string.Format("LDAP://{0}/RootDSE", this.DomainController);
+            }
+            else
+            {
+                connectingPoint = "LDAP://RootDSE";
+            }
+
+            DirectoryEntry entry = null;
+            if (this.credentials != NetworkCredentialExtensions.EMPTY)
+            {
+                try
+                {
+                    entry = new DirectoryEntry(connectingPoint, this.credentials.DomainAndUsername(), this.credentials.Password, AuthenticationTypes.Secure);
+                }
+                catch
+                {
+                    entry = null;
+                }
+            }
+            else
+            {
+                try
+                {
+                    entry = new DirectoryEntry(connectingPoint);
+                }
+                catch
+                {
+                    entry = null;
+                }
+            }
+            if (entry != null)
+            {
+                try
+                {
+                    string tmp = entry.Properties["defaultNamingContext"].Value.ToString();
+                }
+                catch
+                {
+                    entry = null;
+                }
+            }
+
+            return entry;
         }
     }
 }
