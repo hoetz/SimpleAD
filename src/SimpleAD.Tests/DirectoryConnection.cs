@@ -58,9 +58,17 @@ namespace SimpleAD.Tests
             return new DirectoryConnection(domainController, this.credentials);
         }
 
+        private DirectoryEntry GetSearchRoot()
+        {
+            if (this.credentials!=NetworkCredentialExtensions.EMPTY)
+                return new DirectoryEntry(GetDefaultLDAPPath(),this.credentials.DomainAndUsername(),this.credentials.Password);
+            else
+                return new DirectoryEntry(GetDefaultLDAPPath());
+        }
+
         public IEnumerable<dynamic> Query(string ldapQuery)
         {
-            DirectoryEntry searchRoot = new DirectoryEntry(GetDefaultLDAPPath());
+            DirectoryEntry searchRoot = this.GetSearchRoot();
             DirectorySearcher search = new DirectorySearcher(searchRoot);
             search.Filter = ldapQuery;
             search.PropertiesToLoad.Add("samaccountname");

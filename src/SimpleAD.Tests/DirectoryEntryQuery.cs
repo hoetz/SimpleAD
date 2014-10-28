@@ -10,18 +10,18 @@ namespace SimpleAD.Tests
         private string domainController;
         private NetworkCredential cred;
 
-        public DirectoryEntryQuery(string domainController, NetworkCredential cred)
+        internal DirectoryEntryQuery(string domainController, NetworkCredential cred)
         {
             this.domainController = domainController;
             this.cred = cred;
         }
 
-        public DirectoryEntry GetDirectoryEntry(string distinguishedName)
+        internal DirectoryEntry GetDirectoryEntry(string distinguishedName)
         {
             return GetDirectoryEntry(distinguishedName, false);
         }
 
-        public DirectoryEntry GetDirectoryEntry(string distinguishedName, bool UseGC)
+        internal DirectoryEntry GetDirectoryEntry(string distinguishedName, bool UseGC)
         {
             bool ConnectDomain = false;
             DirectoryEntry entry = null;
@@ -87,7 +87,7 @@ namespace SimpleAD.Tests
             return entry;
         }
 
-        public static string FormatDirectoryDistinguishedName(string distinguishedName, string DomainController, BindingMethod bindingMethod, bool useGC, out bool ConnectDomain)
+        internal static string FormatDirectoryDistinguishedName(string distinguishedName, string DomainController, BindingMethod bindingMethod, bool useGC, out bool ConnectDomain)
         {
             int pos = 0, pos2 = 0;
 
@@ -214,56 +214,4 @@ namespace SimpleAD.Tests
         }
     }
 
-    public static class Extensions
-    {
-        public static string ReplaceDNSpecialChars(this string UserDN)
-        {
-            StringBuilder stb = new StringBuilder();
-            string RetVal = UserDN;
-            char[] specialChars = new char[] { '/', '+', '<', '>', '#', ';', '"', ',' };
-            RetVal = RetVal.Replace("\\", "");
-
-            foreach (char chr in specialChars)
-            {
-                RetVal = RetVal.Replace(chr.ToString(), string.Format("\\{0}", chr));
-            }
-            return (RetVal);
-        }
-
-        public static string DNtoDNSDomain(this string strDN)
-        {
-            string strDNSDomain = "";
-            int pos = strDN.ToLower().IndexOf("dc=");
-            if (pos >= 0)
-            {
-                strDNSDomain = strDN.Substring(pos + 3).ToLower().Replace(",dc=", ".");
-            }
-            return (strDNSDomain);
-        }
-
-        public static string MaskUserDN(this string distinguishedName)
-        {
-            StringBuilder stb = new StringBuilder();
-            string[] arDN = distinguishedName.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-            foreach (string DN in arDN)
-            {
-                if (DN.ToLower().StartsWith("cn=") || DN.ToLower().StartsWith("ou=") || DN.ToLower().StartsWith("dc="))
-                {
-                    stb.Append(string.Format(",{0}{1}", DN.Substring(0, 3), DN.Substring(3).ReplaceDNSpecialChars()));
-                }
-                else
-                {
-                    stb.Append(string.Format("\\,{0}", DN.ReplaceDNSpecialChars()));
-                }
-            }
-            if (stb.Length > 0)
-            {
-                return (stb.ToString().Substring(1));
-            }
-            else
-            {
-                return (distinguishedName);
-            }
-        }
-    }
 }

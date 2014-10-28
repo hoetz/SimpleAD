@@ -64,6 +64,7 @@
     <Compile Include="DirectoryConnection.cs" />
     <Compile Include="DirectoryEntryExtensions.cs" />
     <Compile Include="DirectoryEntryQuery.cs" />
+    <Compile Include="DistinguishedNameStringExtensions.cs" />
     <Compile Include="DomainController.cs" />
     <Compile Include="NetworkCredentialExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

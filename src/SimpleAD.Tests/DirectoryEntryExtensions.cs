@@ -36,6 +36,9 @@ namespace SimpleAD.Tests
                 case "lastLogon":
                     return LargeIntegerToDateTime(valCol);
 
+                case "pwdLastSet":
+                    return LargeIntegerToDateTime(valCol);
+
                 default: return valCol.Value;
             }
         }
