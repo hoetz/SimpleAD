@@ -58,18 +58,21 @@ namespace SimpleAD.Tests
             return new DirectoryConnection(domainController, this.credentials);
         }
 
-        private DirectoryEntry GetSearchRoot()
+        public IEnumerable<dynamic> Query(string ldapQuery, string searchRootPath)
         {
-            if (this.credentials!=NetworkCredentialExtensions.EMPTY)
-                return new DirectoryEntry(GetDefaultLDAPPath(),this.credentials.DomainAndUsername(),this.credentials.Password);
-            else
-                return new DirectoryEntry(GetDefaultLDAPPath());
+            DirectoryEntry searchRoot = new DirectoryEntry(searchRootPath);
+            return this.Query(ldapQuery, searchRoot);
         }
 
         public IEnumerable<dynamic> Query(string ldapQuery)
         {
             DirectoryEntry searchRoot = this.GetSearchRoot();
-            DirectorySearcher search = new DirectorySearcher(searchRoot);
+            return this.Query(ldapQuery, searchRoot);
+        }
+
+        private IEnumerable<dynamic> Query(string ldapQuery, DirectoryEntry root)
+        {
+            DirectorySearcher search = new DirectorySearcher(root);
             search.Filter = ldapQuery;
             search.PropertiesToLoad.Add("samaccountname");
             search.PropertiesToLoad.Add("mail");
@@ -88,6 +91,14 @@ namespace SimpleAD.Tests
                     yield return entry.ToDynamicPropertyCollection();
                 }
             }
+        }
+
+        private DirectoryEntry GetSearchRoot()
+        {
+            if (this.credentials != NetworkCredentialExtensions.EMPTY)
+                return new DirectoryEntry(GetDefaultLDAPPath(), this.credentials.DomainAndUsername(), this.credentials.Password);
+            else
+                return new DirectoryEntry(GetDefaultLDAPPath());
         }
 
         private string GetDefaultLDAPPath()
