@@ -14,7 +14,7 @@ namespace SimpleAD.Tests
             string sAMAccountName = "florian.hoetzinger";
             dynamic Results = activeDirectory.Query(string.Format("(&(objectClass=user)(objectCategory=person)(samaccountname={0}))", sAMAccountName));
             Assert.True(Results is IEnumerable);
-            Assert.True(Enumerable.First(Results).sAMAccountName.ToLower() == sAMAccountName);
+            Assert.True(Results.First().sAMAccountName.ToLower() == sAMAccountName);
         }
 
         [Theory]

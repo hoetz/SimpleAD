@@ -63,19 +63,19 @@ namespace SimpleAD
             return new ActiveDirectory(new DomainController(domainController), this.credentials);
         }
 
-        public IEnumerable<dynamic> Query(string ldapQuery, string searchRootPath)
+        public QueryResult Query(string ldapQuery, string searchRootPath)
         {
             DirectoryEntry searchRoot = new DirectoryEntry(searchRootPath);
             return this.Query(ldapQuery, searchRoot);
         }
 
-        public IEnumerable<dynamic> Query(string ldapQuery)
+        public QueryResult Query(string ldapQuery)
         {
             DirectoryEntry searchRoot = this.GetSearchRoot();
             return this.Query(ldapQuery, searchRoot);
         }
 
-        private IEnumerable<dynamic> Query(string ldapQuery, DirectoryEntry root)
+        private QueryResult Query(string ldapQuery, DirectoryEntry root)
         {
             DirectorySearcher search = new DirectorySearcher(root);
             search.Filter = ldapQuery;
@@ -83,18 +83,22 @@ namespace SimpleAD
             search.PropertiesToLoad.Add("mail");
             search.PropertiesToLoad.Add("usergroup");
             search.PropertiesToLoad.Add("displayname");
-            SearchResult result;
             SearchResultCollection resultCol = search.FindAll();
             if (resultCol != null)
             {
-                for (int counter = 0; counter < resultCol.Count; counter++)
-                {
-                    dynamic exp = new ExpandoObject();
-                    string UserNameEmailString = string.Empty;
-                    result = resultCol[counter];
-                    var entry = result.GetDirectoryEntry();
-                    yield return entry.ToDynamicPropertyCollection();
-                }
+                return new QueryResult(this.ProcessSearchResults(resultCol));
+            }
+            return new QueryResult();
+        }
+
+        private IEnumerable<dynamic> ProcessSearchResults(SearchResultCollection srCol)
+        {
+            for (int counter = 0; counter < srCol.Count; counter++)
+            {
+                string UserNameEmailString = string.Empty;
+                var result = srCol[counter];
+                var entry = result.GetDirectoryEntry();
+                yield return entry.ToDynamicPropertyCollection();
             }
         }
 
