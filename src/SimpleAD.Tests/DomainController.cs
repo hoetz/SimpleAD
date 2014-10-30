@@ -2,8 +2,22 @@
 
 namespace SimpleAD.Tests
 {
-    public static class DomainController
+    public class DomainController
     {
+        public static DomainController NONE = new DomainController("NONE");
+
+
+        private string _Value;
+        public string Value
+        {
+            get { return this._Value; }
+        }
+
+        public DomainController(string fqdn)
+        {
+            this._Value = fqdn;
+        }
+
         public static string GetCurrent()
         {
             string SiteName = string.Empty;
@@ -23,5 +37,6 @@ namespace SimpleAD.Tests
                 return currentDomain.FindDomainController(SiteName, LocatorOptions.WriteableRequired).Name;
             }
         }
+
     }
 }

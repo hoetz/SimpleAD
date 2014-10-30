@@ -46,7 +46,7 @@ namespace SimpleAD.Tests
                 .WithDomainController(domainController);
 
             Assert.True(
-                directoryCon.DomainController == domainController);
+                directoryCon.domainController.Value == domainController);
         }
     }
 }

@@ -16,24 +16,23 @@ namespace SimpleAD.Tests
             get { return this._credentials; }
         }
 
-        private string _DomainController;
+        private DomainController _domainController;
 
-        public string DomainController
+        public DomainController domainController
         {
-            get { return this._DomainController; }
+            get { return this._domainController; }
         }
 
-        private DirectoryConnection(string domainController, NetworkCredential credentials)
+        private DirectoryConnection(DomainController domainController, NetworkCredential credentials)
         {
-            this._DomainController = domainController;
+            this._domainController = domainController;
             this._credentials = credentials;
         }
-
 
         public static DirectoryConnection Create()
         {
             var dc = Tests.DomainController.GetCurrent();
-            return new DirectoryConnection(dc, NetworkCredentialExtensions.EMPTY);
+            return new DirectoryConnection(DomainController.NONE, NetworkCredentialExtensions.EMPTY);
         }
 
         public DirectoryConnection WithCredentials(string domain, string userName, string password)
@@ -49,13 +48,15 @@ namespace SimpleAD.Tests
             }
             var dc = Tests.DomainController.GetCurrent();
             return new DirectoryConnection(
-                this.DomainController,
+                this.domainController,
                 new NetworkCredential(userName, securePwd, domain));
         }
 
         public DirectoryConnection WithDomainController(string domainController)
         {
-            return new DirectoryConnection(domainController, this.credentials);
+            if (string.IsNullOrEmpty(domainController))
+                throw new ArgumentException("DomainController must not be empty");
+            return new DirectoryConnection(new DomainController(domainController), this.credentials);
         }
 
         public IEnumerable<dynamic> Query(string ldapQuery, string searchRootPath)
@@ -103,7 +104,7 @@ namespace SimpleAD.Tests
 
         private string GetDefaultLDAPPath()
         {
-            DirectoryEntryQuery qry = new DirectoryEntryQuery(this.DomainController, this.credentials);
+            DirectoryEntryQuery qry = new DirectoryEntryQuery(this.domainController.Value, this.credentials);
 
             DirectoryEntry ent = this.GetRootDSE();
             if (ent != null)
@@ -119,7 +120,7 @@ namespace SimpleAD.Tests
 
         private DirectoryEntry GetDefaultDomainEntry()
         {
-            DirectoryEntryQuery qry = new DirectoryEntryQuery(this.DomainController, this.credentials);
+            DirectoryEntryQuery qry = new DirectoryEntryQuery(this.domainController.Value, this.credentials);
 
             DirectoryEntry ent = this.GetRootDSE();
             if (ent != null)
@@ -140,9 +141,9 @@ namespace SimpleAD.Tests
         private DirectoryEntry GetRootDSE()
         {
             string connectingPoint = "";
-            if (this.DomainController.Length > 0)
+            if (this.domainController != DomainController.NONE)
             {
-                connectingPoint = string.Format("LDAP://{0}/RootDSE", this.DomainController);
+                connectingPoint = string.Format("LDAP://{0}/RootDSE", this.domainController.Value);
             }
             else
             {
