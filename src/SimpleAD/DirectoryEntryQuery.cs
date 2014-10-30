@@ -1,7 +1,5 @@
-﻿using System;
-using System.DirectoryServices;
+﻿using System.DirectoryServices;
 using System.Net;
-using System.Text;
 
 namespace SimpleAD
 {
@@ -213,5 +211,4 @@ namespace SimpleAD
             return distinguishedName;
         }
     }
-
 }

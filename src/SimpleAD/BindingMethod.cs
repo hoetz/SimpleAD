@@ -1,6 +1,6 @@
 ﻿namespace SimpleAD
 {
-    public enum BindingMethod
+    internal enum BindingMethod
     {
         Guid,
         distinguishedName,

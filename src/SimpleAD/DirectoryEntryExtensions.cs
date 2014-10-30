@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace SimpleAD
 {
-    public static class DirectoryEntryExtensions
+    internal static class DirectoryEntryExtensions
     {
         public static dynamic ToDynamicPropertyCollection(this DirectoryEntry e)
         {

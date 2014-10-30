@@ -3,9 +3,9 @@ using System.Reflection;
 
 namespace SimpleAD
 {
-    public static class Converter
+    internal static class Converter
     {
-        public static long FromLargeIntegerToLong(object largeInteger)
+        internal static long FromLargeIntegerToLong(object largeInteger)
         {
             Type type = largeInteger.GetType();
 
