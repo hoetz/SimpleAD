@@ -104,8 +104,6 @@ namespace SimpleAD.Tests
 
         private string GetDefaultLDAPPath()
         {
-            DirectoryEntryQuery qry = new DirectoryEntryQuery(this.domainController.Value, this.credentials);
-
             DirectoryEntry ent = this.GetRootDSE();
             if (ent != null)
             {
@@ -116,26 +114,6 @@ namespace SimpleAD.Tests
                 }
             }
             throw new InvalidOperationException("Could not find DefaultNamingContext");
-        }
-
-        private DirectoryEntry GetDefaultDomainEntry()
-        {
-            DirectoryEntryQuery qry = new DirectoryEntryQuery(this.domainController.Value, this.credentials);
-
-            DirectoryEntry ent = this.GetRootDSE();
-            if (ent != null)
-            {
-                string DefaultNamingContext = ent.Properties["defaultNamingContext"].Value.ToString();
-                if (DefaultNamingContext.Length > 0)
-                {
-                    ent = qry.GetDirectoryEntry(DefaultNamingContext);
-                }
-                else
-                {
-                    ent = null;
-                }
-            }
-            return ent;
         }
 
         private DirectoryEntry GetRootDSE()
