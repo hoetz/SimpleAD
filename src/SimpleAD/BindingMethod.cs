@@ -1,4 +1,4 @@
-﻿namespace SimpleAD.Tests
+﻿namespace SimpleAD
 {
     public enum BindingMethod
     {

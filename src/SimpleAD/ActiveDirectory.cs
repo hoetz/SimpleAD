@@ -5,9 +5,9 @@ using System.Dynamic;
 using System.Net;
 using System.Security;
 
-namespace SimpleAD.Tests
+namespace SimpleAD
 {
-    public class DirectoryConnection
+    public class ActiveDirectory
     {
         private NetworkCredential _credentials = NetworkCredentialExtensions.EMPTY;
 
@@ -23,19 +23,23 @@ namespace SimpleAD.Tests
             get { return this._domainController; }
         }
 
-        private DirectoryConnection(DomainController domainController, NetworkCredential credentials)
+        private ActiveDirectory(DomainController domainController, NetworkCredential credentials)
         {
             this._domainController = domainController;
             this._credentials = credentials;
         }
 
-        public static DirectoryConnection Create()
+        /// <summary>
+        /// Initializes a new <see cref="ActiveDirectory"/> instance without a DomainController or Credentials
+        /// </summary>
+        /// <returns></returns>
+        public static ActiveDirectory Setup()
         {
-            var dc = Tests.DomainController.GetCurrent();
-            return new DirectoryConnection(DomainController.NONE, NetworkCredentialExtensions.EMPTY);
+            var dc = DomainController.GetCurrent();
+            return new ActiveDirectory(DomainController.NONE, NetworkCredentialExtensions.EMPTY);
         }
 
-        public DirectoryConnection WithCredentials(string domain, string userName, string password)
+        public ActiveDirectory WithCredentials(string domain, string userName, string password)
         {
             if (string.IsNullOrEmpty(domain) || string.IsNullOrEmpty(userName) || string.IsNullOrEmpty(password))
             {
@@ -46,17 +50,17 @@ namespace SimpleAD.Tests
             {
                 securePwd.AppendChar(ch);
             }
-            var dc = Tests.DomainController.GetCurrent();
-            return new DirectoryConnection(
+            var dc = DomainController.GetCurrent();
+            return new ActiveDirectory(
                 this.domainController,
                 new NetworkCredential(userName, securePwd, domain));
         }
 
-        public DirectoryConnection WithDomainController(string domainController)
+        public ActiveDirectory WithDomainController(string domainController)
         {
             if (string.IsNullOrEmpty(domainController))
                 throw new ArgumentException("DomainController must not be empty");
-            return new DirectoryConnection(new DomainController(domainController), this.credentials);
+            return new ActiveDirectory(new DomainController(domainController), this.credentials);
         }
 
         public IEnumerable<dynamic> Query(string ldapQuery, string searchRootPath)

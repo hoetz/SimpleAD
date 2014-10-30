@@ -1,6 +1,6 @@
 ﻿using System.DirectoryServices.ActiveDirectory;
 
-namespace SimpleAD.Tests
+namespace SimpleAD
 {
     public class DomainController
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection;
 
-namespace SimpleAD.Tests
+namespace SimpleAD
 {
     public static class Converter
     {

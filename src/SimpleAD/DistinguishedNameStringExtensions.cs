@@ -1,7 +1,7 @@
 using System;
 using System.Text;
 
-namespace SimpleAD.Tests
+namespace SimpleAD
 {
     internal static class DistinguishedNameStringExtensions
     {

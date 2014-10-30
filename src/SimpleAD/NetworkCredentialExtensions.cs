@@ -1,6 +1,6 @@
 ﻿using System.Net;
 
-namespace SimpleAD.Tests
+namespace SimpleAD
 {
     public static class NetworkCredentialExtensions
     {

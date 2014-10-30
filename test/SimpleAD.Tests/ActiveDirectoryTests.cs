@@ -5,14 +5,14 @@ using Xunit.Extensions;
 
 namespace SimpleAD.Tests
 {
-    public class DirectoryConnectionTests
+    public class ActiveDirectoryTests
     {
         [Fact]
         public void Query_WithValidADConnection_ReturnsRequestedUser()
         {
-            DirectoryConnection directoryCon = DirectoryConnection.Create();
+            ActiveDirectory activeDirectory = ActiveDirectory.Setup();
             string sAMAccountName = "florian.hoetzinger";
-            dynamic Results = directoryCon.Query(string.Format("(&(objectClass=user)(objectCategory=person)(samaccountname={0}))", sAMAccountName));
+            dynamic Results = activeDirectory.Query(string.Format("(&(objectClass=user)(objectCategory=person)(samaccountname={0}))", sAMAccountName));
             Assert.True(Results is IEnumerable);
             Assert.True(Enumerable.First(Results).sAMAccountName.ToLower() == sAMAccountName);
         }
@@ -24,9 +24,9 @@ namespace SimpleAD.Tests
             string username,
             string password)
         {
-            DirectoryConnection directoryCon =
-                DirectoryConnection
-                .Create()
+            ActiveDirectory directoryCon =
+                ActiveDirectory
+                .Setup()
                 .WithCredentials(domain, username, password);
 
             Assert.True(
@@ -40,9 +40,9 @@ namespace SimpleAD.Tests
         public void Create_WithDomainController_CreatesValidConnection(
             string domainController)
         {
-            DirectoryConnection directoryCon =
-                DirectoryConnection
-                .Create()
+            ActiveDirectory directoryCon =
+                ActiveDirectory
+                .Setup()
                 .WithDomainController(domainController);
 
             Assert.True(

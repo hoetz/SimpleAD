@@ -3,7 +3,7 @@ using System.DirectoryServices;
 using System.Net;
 using System.Text;
 
-namespace SimpleAD.Tests
+namespace SimpleAD
 {
     internal class DirectoryEntryQuery
     {

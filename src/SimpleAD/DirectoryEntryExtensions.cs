@@ -4,7 +4,7 @@ using System.DirectoryServices;
 using System.Dynamic;
 using System.Linq;
 
-namespace SimpleAD.Tests
+namespace SimpleAD
 {
     public static class DirectoryEntryExtensions
     {
