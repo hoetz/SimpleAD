@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
-using System.Text;
 
 namespace SimpleAD
 {
@@ -18,12 +17,13 @@ namespace SimpleAD
             return new DynamicEnumerator(_sourceEnumerator.Current);
         }
 
-                private QueryResult() : this(Enumerable.Empty<IEnumerable<dynamic>>())
+        private QueryResult()
+            : this(Enumerable.Empty<IEnumerable<dynamic>>())
         {
-            
         }
 
-        public QueryResult(params IEnumerable<dynamic>[] sources) : this (sources.AsEnumerable())
+        public QueryResult(params IEnumerable<dynamic>[] sources)
+            : this(sources.AsEnumerable())
         {
         }
 
@@ -70,8 +70,7 @@ namespace SimpleAD
         }
     }
 
-
-    class DynamicEnumerator : IEnumerator, IDisposable
+    internal class DynamicEnumerator : IEnumerator, IDisposable
     {
         //contains code taken from https://raw.githubusercontent.com/markrendle/Simple.Data/65ff01e482ce71190869001c221caa140feb70e5/Simple.Data/SimpleResultSet.cs
 

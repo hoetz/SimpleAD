@@ -6,8 +6,8 @@ namespace SimpleAD
     {
         public static DomainController NONE = new DomainController("NONE");
 
-
         private string _Value;
+
         public string Value
         {
             get { return this._Value; }
@@ -37,6 +37,5 @@ namespace SimpleAD
                 return currentDomain.FindDomainController(SiteName, LocatorOptions.WriteableRequired).Name;
             }
         }
-
     }
 }
