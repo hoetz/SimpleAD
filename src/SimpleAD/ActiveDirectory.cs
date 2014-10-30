@@ -34,7 +34,6 @@ namespace SimpleAD
         /// <returns></returns>
         public static ActiveDirectory Setup()
         {
-            var dc = DomainController.GetCurrent();
             return new ActiveDirectory(DomainController.NONE, NetworkCredentialExtensions.EMPTY);
         }
 
