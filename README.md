@@ -3,9 +3,9 @@ SimpleAD
 ##Summary##
 Active Directory meets the dynamic keyword
 ##Sample usage##
-			DirectoryConnection directoryCon = DirectoryConnection.Create();
+			ActiveDirectory activeDirectory = ActiveDirectory.Setup();
             string filter = "flo*";
-            dynamic Results = directoryCon
+            dynamic Results = activeDirectory
             	.Query(string.Format("(&(objectClass=user)(objectCategory=person)(samaccountname={0}))", filter));
             foreach (var user in Results)
             {
