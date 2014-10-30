@@ -48,9 +48,8 @@ namespace SimpleAD
             {
                 securePwd.AppendChar(ch);
             }
-            var dc = DomainController.GetCurrent();
             return new ActiveDirectory(
-                this.domainController,
+                DomainController.NONE,
                 new NetworkCredential(userName, securePwd, domain));
         }
 
