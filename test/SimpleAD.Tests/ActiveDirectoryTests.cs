@@ -17,6 +17,15 @@ namespace SimpleAD.Tests
             Assert.True(Results.First().sAMAccountName.ToLower() == sAMAccountName);
         }
 
+        [Fact]
+        public void QueryResult_NotEmpty_ReturnsCorrectCount()
+        {
+            ActiveDirectory activeDirectory = ActiveDirectory.Setup();
+            string sAMAccountName = "florian.hoetzinger";
+            dynamic Results = activeDirectory.Query(string.Format("(&(objectClass=user)(objectCategory=person)(samaccountname={0}))", sAMAccountName));
+            Assert.True(Results.Count()==1);
+        }
+
         [Theory]
         [AutoNAttribute]
         public void Create_WithCredentials_CreatesValidConnectionCredentials(
