@@ -8,12 +8,24 @@ namespace SimpleAD
 {
     internal static class DirectoryEntryExtensions
     {
-        public static dynamic ToDynamicPropertyCollection(this DirectoryEntry e)
+        public static dynamic ToDynamicPropertyCollection(this DirectoryEntry e, IEnumerable<string> propertiesToLoad)
         {
+            var effectivePropList=e.Properties.Cast<PropertyValueCollection>();
+
             ExpandoObject dyn = new ExpandoObject();
-            foreach (PropertyValueCollection pro in e.Properties.Cast<PropertyValueCollection>())
+            if (propertiesToLoad == null)
             {
-                ((IDictionary<string, object>)dyn)[pro.PropertyName] = pro.PrettyPropertyValue();
+                foreach (PropertyValueCollection pro in e.Properties.Cast<PropertyValueCollection>())
+                {
+                    ((IDictionary<string, object>)dyn)[pro.PropertyName] = pro.PrettyPropertyValue();
+                }
+            }
+            else
+            {
+                foreach (var prop in propertiesToLoad)
+                {
+                    ((IDictionary<string, object>)dyn)[prop] = e.Properties[prop];
+                }
             }
             ((IDictionary<string, object>)dyn)["NativeGuid"] = e.NativeGuid;
             ((IDictionary<string, object>)dyn)["Guid"] = e.Guid;
