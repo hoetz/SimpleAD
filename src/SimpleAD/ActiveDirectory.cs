@@ -80,23 +80,26 @@ namespace SimpleAD
 
         private QueryResult Query(string ldapQuery, DirectoryEntry root, IEnumerable<string> propertiesToLoad)
         {
-            DirectorySearcher search = new DirectorySearcher(root);
-            search.Filter = ldapQuery;
+            using (DirectorySearcher search = new DirectorySearcher(root))
+            {
+                search.Filter = ldapQuery;
+                search.PageSize = 1000;
 
-            if (propertiesToLoad != null)
-            {
-                foreach (var prop in propertiesToLoad)
+                if (propertiesToLoad != null)
                 {
-                    search.PropertiesToLoad.Add(prop);
+                    foreach (var prop in propertiesToLoad)
+                    {
+                        search.PropertiesToLoad.Add(prop);
+                    }
                 }
+
+                SearchResultCollection resultCol = search.FindAll();
+                if (resultCol != null)
+                {
+                    return new QueryResult(this.ProcessSearchResults(resultCol, propertiesToLoad));
+                }
+                return new QueryResult();
             }
-        
-            SearchResultCollection resultCol = search.FindAll();
-            if (resultCol != null)
-            {
-                return new QueryResult(this.ProcessSearchResults(resultCol, propertiesToLoad));
-            }
-            return new QueryResult();
         }
 
         private IEnumerable<dynamic> ProcessSearchResults(SearchResultCollection srCol, IEnumerable<string> propertiesToLoad)
