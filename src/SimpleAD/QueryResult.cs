@@ -54,6 +54,11 @@ namespace SimpleAD
             return _sourceEnumerator.Current.ToList();
         }
 
+        public int Count()
+        {
+            return _sourceEnumerator.Current.Count();
+        }
+
         public dynamic[] ToArray()
         {
             return _sourceEnumerator.Current.ToArray();

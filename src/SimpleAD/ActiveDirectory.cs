@@ -60,42 +60,54 @@ namespace SimpleAD
             return new ActiveDirectory(new DomainController(domainController), this.credentials);
         }
 
-        public QueryResult Query(string ldapQuery, string searchRootPath)
+        public QueryResult Query(string ldapQuery, string searchRootPath, IEnumerable<string> propertiesToLoad=null)
         {
             DirectoryEntry searchRoot = new DirectoryEntry(searchRootPath);
-            return this.Query(ldapQuery, searchRoot);
+            return this.Query(ldapQuery, searchRoot,propertiesToLoad);
         }
 
-        public QueryResult Query(string ldapQuery)
+        /// <summary>
+        /// Executes a search in the configured Active Directory connection.
+        /// </summary>
+        /// <param name="ldapQuery">The LDAP search filter</param>
+        /// <param name="propertiesToLoad">The list of properties to load. Default: All properties are loaded.</param>
+        /// <returns></returns>
+        public QueryResult Query(string ldapQuery, IEnumerable<string> propertiesToLoad = null)
         {
             DirectoryEntry searchRoot = this.GetSearchRoot();
-            return this.Query(ldapQuery, searchRoot);
+            return this.Query(ldapQuery, searchRoot, propertiesToLoad);
         }
 
-        private QueryResult Query(string ldapQuery, DirectoryEntry root)
+        private QueryResult Query(string ldapQuery, DirectoryEntry root, IEnumerable<string> propertiesToLoad)
         {
-            DirectorySearcher search = new DirectorySearcher(root);
-            search.Filter = ldapQuery;
-            search.PropertiesToLoad.Add("samaccountname");
-            search.PropertiesToLoad.Add("mail");
-            search.PropertiesToLoad.Add("usergroup");
-            search.PropertiesToLoad.Add("displayname");
-            SearchResultCollection resultCol = search.FindAll();
-            if (resultCol != null)
+            using (DirectorySearcher search = new DirectorySearcher(root))
             {
-                return new QueryResult(this.ProcessSearchResults(resultCol));
+                search.Filter = ldapQuery;
+                search.PageSize = 1000;
+
+                if (propertiesToLoad != null)
+                {
+                    foreach (var prop in propertiesToLoad)
+                    {
+                        search.PropertiesToLoad.Add(prop);
+                    }
+                }
+
+                SearchResultCollection resultCol = search.FindAll();
+                if (resultCol != null)
+                {
+                    return new QueryResult(this.ProcessSearchResults(resultCol, propertiesToLoad));
+                }
+                return new QueryResult();
             }
-            return new QueryResult();
         }
 
-        private IEnumerable<dynamic> ProcessSearchResults(SearchResultCollection srCol)
+        private IEnumerable<dynamic> ProcessSearchResults(SearchResultCollection srCol, IEnumerable<string> propertiesToLoad)
         {
-            for (int counter = 0; counter < srCol.Count; counter++)
+            foreach (SearchResult item in srCol)
             {
-                string UserNameEmailString = string.Empty;
-                var result = srCol[counter];
-                var entry = result.GetDirectoryEntry();
-                yield return entry.ToDynamicPropertyCollection();
+                var entry = item.GetDirectoryEntry();
+                yield return entry.ToDynamicPropertyCollection(propertiesToLoad);
             }
         }
 
@@ -170,5 +182,7 @@ namespace SimpleAD
 
             return entry;
         }
+
+      
     }
 }
