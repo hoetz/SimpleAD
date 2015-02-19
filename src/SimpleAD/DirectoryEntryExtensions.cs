@@ -24,7 +24,7 @@ namespace SimpleAD
             {
                 foreach (var prop in propertiesToLoad)
                 {
-                    ((IDictionary<string, object>)dyn)[prop] = e.Properties[prop];
+                    ((IDictionary<string, object>)dyn)[prop] = e.Properties[prop].Value;
                 }
             }
             ((IDictionary<string, object>)dyn)["NativeGuid"] = e.NativeGuid;
