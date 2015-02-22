@@ -6,13 +6,9 @@
     <title>SimpleAD</title>
     <authors>hoetz</authors>
     <owners>hoetz</owners>
-    <licenseUrl></licenseUrl>
     <projectUrl>https://github.com/hoetz/SimpleAD</projectUrl>
-    <iconUrl></iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Active Directory meets the dynamic keyword</description>
-    <releaseNotes></releaseNotes>
     <copyright>Copyright 2015</copyright>
-    <tags></tags>
   </metadata>
 </package>
