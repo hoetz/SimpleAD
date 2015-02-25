@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Linq;
 using Xunit;
 using Xunit.Extensions;
@@ -24,6 +25,18 @@ namespace SimpleAD.Tests
             string sAMAccountName = "florian.hoetzinger";
             dynamic Results = activeDirectory.Query(string.Format("(&(objectClass=user)(objectCategory=person)(samaccountname={0}))", sAMAccountName));
             Assert.True(Results.Count()==1);
+        }
+
+        [Fact]
+        public void Query_ReturnsOnlyLoadedProperties()
+        {
+            ActiveDirectory activeDirectory = ActiveDirectory.Setup();
+            string sAMAccountName = "florian.hoetzinger";
+            dynamic Results = activeDirectory.Query(string.Format("(&(objectClass=user)(objectCategory=person)(samaccountname={0}))", sAMAccountName), new string[] { "sAMAccountName","sn"});
+            dynamic user = Results.First();
+            Assert.True(user.sAMAccountName == "Florian.Hoetzinger");
+            Assert.Throws<Microsoft.CSharp.RuntimeBinder.RuntimeBinderException>(() => user.givenName);
+
         }
 
         [Theory]
