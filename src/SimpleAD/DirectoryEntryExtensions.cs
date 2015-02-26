@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.DirectoryServices;
 using System.Dynamic;
 using System.Linq;
+using Westwind.Utilities;
 
 namespace SimpleAD
 {
@@ -12,23 +13,23 @@ namespace SimpleAD
         {
             var effectivePropList=e.Properties.Cast<PropertyValueCollection>();
 
-            ExpandoObject dyn = new ExpandoObject();
+            DynamicActiveDirectoryObject dyn = new DynamicActiveDirectoryObject(e);
             if (propertiesToLoad == null)
             {
                 foreach (PropertyValueCollection pro in e.Properties.Cast<PropertyValueCollection>())
                 {
-                    ((IDictionary<string, object>)dyn)[pro.PropertyName] = pro.PrettyPropertyValue();
+                    dyn[pro.PropertyName] = pro.PrettyPropertyValue();
                 }
             }
             else
             {
                 foreach (var prop in propertiesToLoad)
                 {
-                    ((IDictionary<string, object>)dyn)[prop] = e.Properties[prop].PrettyPropertyValue();
+                    dyn[prop] = e.Properties[prop].PrettyPropertyValue();
                 }
             }
-            ((IDictionary<string, object>)dyn)["NativeGuid"] = e.NativeGuid;
-            ((IDictionary<string, object>)dyn)["Guid"] = e.Guid;
+            dyn["NativeGuid"] = e.NativeGuid;
+            dyn["Guid"] = e.Guid;
             return dyn;
         }
 
