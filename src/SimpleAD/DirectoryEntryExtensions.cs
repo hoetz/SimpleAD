@@ -24,7 +24,7 @@ namespace SimpleAD
             {
                 foreach (var prop in propertiesToLoad)
                 {
-                    ((IDictionary<string, object>)dyn)[prop] = e.Properties[prop].Value;
+                    ((IDictionary<string, object>)dyn)[prop] = e.Properties[prop].PrettyPropertyValue();
                 }
             }
             ((IDictionary<string, object>)dyn)["NativeGuid"] = e.NativeGuid;
@@ -49,6 +49,24 @@ namespace SimpleAD
                     return LargeIntegerToDateTime(valCol);
 
                 case "pwdLastSet":
+                    return LargeIntegerToDateTime(valCol);
+
+                case "lockoutTime":
+                    return LargeIntegerToDateTime(valCol);
+
+                case"uSNChanged":
+                    return LargeIntegerToDateTime(valCol);
+
+                case "uSNCreated":
+                    return LargeIntegerToDateTime(valCol);
+
+                case "uSNDSALastObjRemoved":
+                    return LargeIntegerToDateTime(valCol);
+
+                case "uSNLastObjRem":
+                    return LargeIntegerToDateTime(valCol);
+
+                case "uSNSource":
                     return LargeIntegerToDateTime(valCol);
 
                 default: return valCol.Value;

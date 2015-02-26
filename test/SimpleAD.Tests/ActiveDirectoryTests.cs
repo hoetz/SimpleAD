@@ -36,7 +36,16 @@ namespace SimpleAD.Tests
             dynamic user = Results.First();
             Assert.True(user.sAMAccountName == "Florian.Hoetzinger");
             Assert.Throws<Microsoft.CSharp.RuntimeBinder.RuntimeBinderException>(() => user.givenName);
+        }
 
+        [Fact]
+        public void Query_ReturnsLargeIntegerPropertyAsDateTime()
+        {
+            ActiveDirectory activeDirectory = ActiveDirectory.Setup();
+            string sAMAccountName = "florian.hoetzinger";
+            dynamic Results = activeDirectory.Query(string.Format("(&(objectClass=user)(objectCategory=person)(samaccountname={0}))", sAMAccountName), new string[] { "pwdLastSet" });
+            dynamic user = Results.First();
+            Assert.True(user.pwdLastSet is DateTime);
         }
 
         [Theory]
