@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>SimpleAD</id>
+    <version>0.0.13</version>
+    <title>SimpleAD</title>
+    <authors>Florian Hötzinger</authors>
+    <owners>hoetz</owners>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>A simple library to read and write data in Active Directory</description>
+    <copyright>Florian Hötzinger 2015</copyright>
+    <language>en-US</language>
+    <tags>activedirectory</tags>
+    <frameworkAssemblies>
+      <frameworkAssembly assemblyName="System.DirectoryServices" targetFramework="" />
+    </frameworkAssemblies>
+	<dependencies>
+		<dependency id="Westwind.Utilities" version="2.59.2" />
+	</dependencies>
+    <releaseNotes></releaseNotes>
+  </metadata>
+  <files>
+    <file src="SimpleAD.dll" target="lib\net40" />
+  </files>
+</package>
