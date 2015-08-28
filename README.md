@@ -27,7 +27,7 @@ foreach (string parentItemDN in user.memberOf)
 {
 	//Do something with the distinguishedName of the group
 }
-```csharp
+```
 ##Updating data##
 ```csharp
 string sAMAccountName = "myTestAccount";
