@@ -27,8 +27,9 @@ foreach (string parentItemDN in user.memberOf)
 {
 	//Do something with the distinguishedName of the group
 }
-
-###Updating data###
+```csharp
+##Updating data##
+```csharp
 string sAMAccountName = "myTestAccount";
 ActiveDirectory activeDirectory = ActiveDirectory.Setup();
 
