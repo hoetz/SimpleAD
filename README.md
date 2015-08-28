@@ -27,3 +27,16 @@ foreach (string parentItemDN in user.memberOf)
 {
 	//Do something with the distinguishedName of the group
 }
+
+###Updating data###
+string sAMAccountName = "myTestAccount";
+ActiveDirectory activeDirectory = ActiveDirectory.Setup();
+
+string ldapQuery=string.Format("(&(objectClass=user)(objectCategory=person)(samaccountname={0}))", sAMAccountName);
+string[] propsToLoad=new string[] { "sAMAccountName", "wWWHomePage" };
+
+dynamic Results = activeDirectory.Query(ldapQuery,propsToLoad);
+dynamic user = Results.First();
+
+user.wWWHomePage = wWWHomePage;
+user.Save();
