@@ -130,7 +130,7 @@ namespace SimpleAD
                     return string.Format("LDAP://{0}", DefaultNamingContext);
                 }
             }
-            throw new InvalidOperationException("Could not find DefaultNamingContext");
+            throw new InvalidOperationException("Could not find DefaultNamingContext, check your credentials");
         }
 
         private DirectoryEntry GetRootDSE()
