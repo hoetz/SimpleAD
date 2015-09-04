@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     <id>SimpleAD</id>
-    <version>0.0.13</version>
+    <version>$version$</version>
     <title>SimpleAD</title>
     <authors>Florian Hötzinger</authors>
     <owners>hoetz</owners>
@@ -20,6 +20,6 @@
     <releaseNotes></releaseNotes>
   </metadata>
   <files>
-    <file src="SimpleAD.dll" target="lib\net40" />
+    <file src="..\src\SimpleAD\bin\$configuration$\SimpleAD.dll" target="lib\net40" />
   </files>
 </package>
