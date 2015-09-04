@@ -12,7 +12,7 @@ namespace SimpleAD.Tests
         [AutoN]
         public void Save_ValidUser_WritesPropertiesCorrectly(string wWWHomePage)
         {
-            string sAMAccountName = "Testbenutzer";
+            string sAMAccountName = "florian.hoetzinger";
             ActiveDirectory activeDirectory = ActiveDirectory.Setup();
 
             string ldapQuery=string.Format("(&(objectClass=user)(objectCategory=person)(samaccountname={0}))", sAMAccountName);
@@ -27,6 +27,26 @@ namespace SimpleAD.Tests
             Results = activeDirectory.Query(ldapQuery, propsToLoad);
             var actual = Results.First();
             Assert.True(actual["wWWHomePage"] == wWWHomePage);
+        }
+
+        [Fact]
+        public void Save_WithNullPropertyValue_ClearsADProperty()
+        {
+            string sAMAccountName = "florian.hoetzinger";
+            ActiveDirectory activeDirectory = ActiveDirectory.Setup();
+
+            string ldapQuery = string.Format("(&(objectClass=user)(objectCategory=person)(samaccountname={0}))", sAMAccountName);
+            string[] propsToLoad = new string[] { "sAMAccountName", "wWWHomePage" };
+
+            dynamic Results = activeDirectory.Query(ldapQuery, propsToLoad);
+            dynamic user = Results.First();
+
+            user.wWWHomePage = null;
+            user.Save();
+
+            Results = activeDirectory.Query(ldapQuery, propsToLoad);
+            var actual = Results.First();
+            Assert.True(actual["wWWHomePage"] == null);
         }
     }
 }

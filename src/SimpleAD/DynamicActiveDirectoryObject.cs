@@ -17,7 +17,12 @@ namespace SimpleAD
             foreach (var item in this.GetDynamicMemberNames())
             {
                 if (item != "NativeGuid" && item != "Guid")
-                    this.sourceEntry.Properties[item].Value = this[item];
+                {
+                    if (this[item] == null)
+                        this.sourceEntry.Properties[item].Clear();
+                    else
+                        this.sourceEntry.Properties[item].Value = this[item];
+                }
             }
             this.sourceEntry.CommitChanges();
         }
