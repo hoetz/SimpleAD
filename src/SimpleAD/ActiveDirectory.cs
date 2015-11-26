@@ -60,6 +60,17 @@ namespace SimpleAD
             return new ActiveDirectory(new DomainController(domainController), this.credentials);
         }
 
+        public int QueryCount(string ldapQuery)
+        {
+            DirectoryEntry searchRoot = this.GetSearchRoot();
+
+            using (DirectorySearcher srch = new DirectorySearcher(searchRoot, ldapQuery))
+            {
+                srch.PageSize = 1000;
+                return srch.FindAll().Count;
+            }
+        }
+
         public QueryResult Query(string ldapQuery, string searchRootPath, IEnumerable<string> propertiesToLoad=null)
         {
             DirectoryEntry searchRoot = new DirectoryEntry(searchRootPath);

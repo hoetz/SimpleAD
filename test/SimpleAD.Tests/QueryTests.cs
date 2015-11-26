@@ -79,5 +79,13 @@ namespace SimpleAD.Tests
             Assert.True(
                 directoryCon.domainController.Value == domainController);
         }
+
+        [Fact]
+        public void QueryCount_NotEmpty_ReturnsNonZeroCount()
+        {
+            ActiveDirectory activeDirectory = ActiveDirectory.Setup();
+            int Results = activeDirectory.QueryCount("(&(objectClass=user)(objectCategory=person))");
+            Assert.True(Results > 0);
+        }
     }
 }
