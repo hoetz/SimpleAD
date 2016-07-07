@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.DirectoryServices;
 using System.Net;
 using System.Security;
@@ -118,7 +119,17 @@ namespace SimpleAD
             foreach (SearchResult item in srCol)
             {
                 var entry = item.GetDirectoryEntry();
-                yield return entry.ToDynamicPropertyCollection(propertiesToLoad);
+                var dynCollection = new DynamicActiveDirectoryObject(entry);
+                try
+                {
+                    dynCollection =  entry.ToDynamicPropertyCollection(propertiesToLoad);
+                }
+                catch
+                {
+                    Debug.WriteLine($"WARNING: Could not bind {entry.Path}");
+                    continue;
+                }
+                yield return dynCollection;
             }
         }
 
