@@ -61,20 +61,40 @@ namespace SimpleAD
             return new ActiveDirectory(new DomainController(domainController), this.credentials);
         }
 
-        public int QueryCount(string ldapQuery)
+        public int QueryCount(string ldapQuery, string searchRootDN=null)
         {
-            DirectoryEntry searchRoot = this.GetSearchRoot();
+            DirectoryEntry searchRoot = null;
+            if (string.IsNullOrEmpty(searchRootDN) == false)
+                searchRoot = new DirectoryEntry(string.Format("LDAP://{0}", searchRootDN));
+            else
+                searchRoot = GetSearchRoot();
 
             using (DirectorySearcher srch = new DirectorySearcher(searchRoot, ldapQuery))
             {
                 srch.PageSize = 1000;
-                return srch.FindAll().Count;
+                try
+                {
+                    return srch.FindAll().Count;
+                }
+                catch
+                {
+                    throw new ArgumentException("LDAP Query or searchRoot invalid");
+                }
             }
         }
+
 
         public QueryResult Query(string ldapQuery, string searchRootPath, IEnumerable<string> propertiesToLoad=null)
         {
             DirectoryEntry searchRoot = new DirectoryEntry(searchRootPath);
+            try
+            {
+                string testSearchRootName = searchRoot.Name;
+            }
+            catch
+            {
+                throw new ArgumentException("Invalid Search Root Path");
+            }
             return this.Query(ldapQuery, searchRoot,propertiesToLoad);
         }
 
