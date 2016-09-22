@@ -65,7 +65,7 @@ namespace SimpleAD
         {
             DirectoryEntry searchRoot = null;
             if (string.IsNullOrEmpty(searchRootDN) == false)
-                searchRoot = new DirectoryEntry(string.Format("LDAP://{0}", searchRootDN));
+                searchRoot = new DirectoryEntry(string.Format("LDAP://{0}{1}", InsertDCInLDAPPathIfAvailable(), searchRootDN));
             else
                 searchRoot = GetSearchRoot();
 
@@ -169,10 +169,20 @@ namespace SimpleAD
                 string DefaultNamingContext = ent.Properties["defaultNamingContext"].Value.ToString();
                 if (DefaultNamingContext.Length > 0)
                 {
-                    return string.Format("LDAP://{0}", DefaultNamingContext);
+                    return string.Format("LDAP://{0}{1}", InsertDCInLDAPPathIfAvailable(), DefaultNamingContext);
                 }
             }
             throw new InvalidOperationException("Could not find DefaultNamingContext, check your credentials");
+        }
+
+        private string InsertDCInLDAPPathIfAvailable()
+        {
+            if (this.domainController != DomainController.NONE)
+            {
+                return string.Format("{0}/",this.domainController.Value);
+            }
+            else
+                return string.Empty;
         }
 
         private DirectoryEntry GetRootDSE()
