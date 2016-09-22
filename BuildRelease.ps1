@@ -24,7 +24,7 @@ function Get-CurrentPackageVersion($pathToAssembly)
 
 $env:nuget="nuget"
 
-Start-Process -NoNewWindow -Wait -FilePath $env:windir\Microsoft.NET\Framework\v4.0.30319\MSBuild -ArgumentList ('src\SimpleAD\SimpleAD.csproj', (Get-VsVersion),(Get-BuildConfiguration))
+Start-Process -NoNewWindow -Wait -FilePath ${Env:ProgramFiles(x86)}\MSBuild\14.0\Bin\MSBuild -ArgumentList ('src\SimpleAD\SimpleAD.csproj', (Get-VsVersion),(Get-BuildConfiguration))
 
 $env:version=Get-CurrentPackageVersion (Resolve-Path -Path (".\src\SimpleAD\bin\{0}\SimpleAD.dll" -f $env:config) -Relative)
 
