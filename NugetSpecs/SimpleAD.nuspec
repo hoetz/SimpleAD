@@ -6,7 +6,7 @@
     <title>SimpleAD</title>
     <authors>Florian Hötzinger</authors>
     <owners>hoetz</owners>
-    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+ <projectUrl>https://github.com/hoetz/SimpleAD</projectUrl>   <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>A simple library to read and write data in Active Directory</description>
     <copyright>Florian Hötzinger 2015</copyright>
     <language>en-US</language>
