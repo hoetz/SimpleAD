@@ -45,6 +45,8 @@ namespace SimpleAD
 
         private static object PrettyPropertyValue(this PropertyValueCollection valCol)
         {
+            if (valCol.Value == null)
+                return null;
             switch (valCol.PropertyName)
             {
                 case "accountExpires":
@@ -91,6 +93,12 @@ namespace SimpleAD
 
                 case "msExchMailboxSecurityDescriptor":
                     return ToSecurityDescriptor(valCol);
+
+                case "msExchArchiveWarnQuota":
+                    return LargeInteger(valCol);
+
+                case "msExchArchiveQuota":
+                    return LargeInteger(valCol);
 
                 default: return valCol.Value;
             }
