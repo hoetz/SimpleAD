@@ -1,5 +1,8 @@
-﻿using System;
+﻿using ActiveDs;
+using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.DirectoryServices;
 using System.Dynamic;
 using System.Linq;
@@ -25,7 +28,14 @@ namespace SimpleAD
             {
                 foreach (var prop in propertiesToLoad)
                 {
-                    dyn[prop] = e.Properties[prop].PrettyPropertyValue();
+                    try
+                    {
+                        dyn[prop] = e.Properties[prop].PrettyPropertyValue();
+                    }
+                    catch
+                    {
+                        Debug.WriteLine($"WARNING: Could not bind property {prop} from {e.Path}");
+                    }
                 }
             }
             dyn["NativeGuid"] = e.NativeGuid;
@@ -49,6 +59,9 @@ namespace SimpleAD
                 case "lastLogon":
                     return LargeIntegerToDateTime(valCol);
 
+                case "lastLogonTimestamp":
+                    return LargeIntegerToDateTime(valCol);
+
                 case "pwdLastSet":
                     return LargeIntegerToDateTime(valCol);
 
@@ -70,12 +83,52 @@ namespace SimpleAD
                 case "uSNSource":
                     return LargeIntegerToDateTime(valCol);
 
+                case "msExchRecipientTypeDetails":
+                    return LargeInteger(valCol);
+
+                case "msExchVersion":
+                    return LargeInteger(valCol);
+
+                case "msExchMailboxSecurityDescriptor":
+                    return ToSecurityDescriptor(valCol);
+
                 default: return valCol.Value;
             }
         }
 
+        private static object ToSecurityDescriptor(PropertyValueCollection valCol)
+        {
+            SecurityDescriptor sd = (SecurityDescriptor)valCol.Value;
+            AccessControlList acl = (AccessControlList)sd.DiscretionaryAcl;
+            String m_Trustee = "";
+            String m_AccessMask = "";
+            String m_AceType = "";
+            String m_ReturnValue = "";
+
+            foreach (AccessControlEntry ace in (IEnumerable)acl)
+            {
+                m_Trustee = m_Trustee + "," + ace.Trustee;
+                m_AccessMask = m_AccessMask + "," + ace.AccessMask.ToString();
+                m_AceType = m_AceType + "," + ace.AceType.ToString();
+
+            }
+            m_ReturnValue = "Trustee: " + m_Trustee + " " + "AccessMask: " + m_AccessMask + "AceType: " + m_AceType;
+            return m_ReturnValue;
+
+        }
+
+        private static object LargeInteger(PropertyValueCollection valCol)
+        {
+            if (valCol.Value == null)
+                return 0L;
+            var asLong = Converter.FromLargeIntegerToLong(valCol.Value);
+            return asLong.ToString();
+        }
+
         private static object LargeIntegerToDateTime(PropertyValueCollection valCol)
         {
+            if (valCol.Value == null)
+                return 0L;
             var asLong = Converter.FromLargeIntegerToLong(valCol.Value);
             if (asLong == long.MaxValue || asLong <= 0 || DateTime.MaxValue.ToFileTime() <= asLong)
             {
