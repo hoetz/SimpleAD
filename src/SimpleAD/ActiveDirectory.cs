@@ -16,7 +16,7 @@ namespace SimpleAD
             get { return this._credentials; }
         }
 
-        private DomainController _domainController;
+        private DomainController _domainController=DomainController.NONE;
 
         public DomainController domainController
         {
@@ -50,7 +50,7 @@ namespace SimpleAD
                 securePwd.AppendChar(ch);
             }
             return new ActiveDirectory(
-                DomainController.NONE,
+                this.domainController,
                 new NetworkCredential(userName, securePwd, domain));
         }
 
