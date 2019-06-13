@@ -8,7 +8,9 @@ namespace SimpleAD
 
         internal static string DomainAndUsername(this NetworkCredential cred)
         {
-            return string.Format("{0}\\{1}", cred.Domain, cred.UserName);
+            if (!string.IsNullOrEmpty(cred.Domain))
+                return string.Format("{0}\\{1}", cred.Domain, cred.UserName);
+            return string.Format("{0}", cred.UserName);
         }
     }
 }

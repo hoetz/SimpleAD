@@ -16,7 +16,7 @@ namespace SimpleAD
             get { return this._credentials; }
         }
 
-        private DomainController _domainController=DomainController.NONE;
+        private DomainController _domainController = DomainController.NONE;
 
         public DomainController domainController
         {
@@ -40,18 +40,23 @@ namespace SimpleAD
 
         public ActiveDirectory WithCredentials(string domain, string userName, string password)
         {
-            if (string.IsNullOrEmpty(domain) || string.IsNullOrEmpty(userName) || string.IsNullOrEmpty(password))
+            if (string.IsNullOrEmpty(userName) || string.IsNullOrEmpty(password))
             {
-                throw new ArgumentException("Domain, Username & Password required");
+                throw new ArgumentException("Username & Password required");
             }
             SecureString securePwd = new SecureString();
             foreach (char ch in password)
             {
                 securePwd.AppendChar(ch);
             }
+            var cred = new NetworkCredential(userName, securePwd, domain);
+            if (string.IsNullOrEmpty(domain))
+            {
+                cred = new NetworkCredential(userName, securePwd);
+            }
             return new ActiveDirectory(
                 this.domainController,
-                new NetworkCredential(userName, securePwd, domain));
+                cred);
         }
 
         public ActiveDirectory WithDomainController(string domainController)
@@ -61,7 +66,7 @@ namespace SimpleAD
             return new ActiveDirectory(new DomainController(domainController), this.credentials);
         }
 
-        public int QueryCount(string ldapQuery, string searchRootDN=null)
+        public int QueryCount(string ldapQuery, string searchRootDN = null)
         {
             DirectoryEntry searchRoot = null;
             if (string.IsNullOrEmpty(searchRootDN) == false)
@@ -84,7 +89,7 @@ namespace SimpleAD
         }
 
 
-        public QueryResult Query(string ldapQuery, string searchRootPath, IEnumerable<string> propertiesToLoad=null)
+        public QueryResult Query(string ldapQuery, string searchRootPath, IEnumerable<string> propertiesToLoad = null)
         {
             DirectoryEntry searchRoot = new DirectoryEntry(searchRootPath);
             try
@@ -95,7 +100,7 @@ namespace SimpleAD
             {
                 throw new ArgumentException("Invalid Search Root Path");
             }
-            return this.Query(ldapQuery, searchRoot,propertiesToLoad);
+            return this.Query(ldapQuery, searchRoot, propertiesToLoad);
         }
 
         /// <summary>
@@ -142,7 +147,7 @@ namespace SimpleAD
                 var dynCollection = new DynamicActiveDirectoryObject(entry);
                 try
                 {
-                    dynCollection =  entry.ToDynamicPropertyCollection(propertiesToLoad);
+                    dynCollection = entry.ToDynamicPropertyCollection(propertiesToLoad);
                 }
                 catch
                 {
@@ -179,7 +184,7 @@ namespace SimpleAD
         {
             if (this.domainController != DomainController.NONE)
             {
-                return string.Format("{0}/",this.domainController.Value);
+                return string.Format("{0}/", this.domainController.Value);
             }
             else
                 return string.Empty;
@@ -235,6 +240,6 @@ namespace SimpleAD
             return entry;
         }
 
-      
+
     }
 }
